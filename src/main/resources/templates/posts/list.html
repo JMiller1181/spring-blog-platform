@@ -5,6 +5,26 @@
     <title>List post</title>
 </head>
 <body>
-
+<h2>Posts</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Content</th>
+        <th>Author</th>
+    </tr>
+    <tr th:each="post : ${postList}">
+        <td th:text="${post.id}"></td>
+        <td th:text="${post.title}"></td>
+        <td th:text="${post.content}"></td>
+        <td th:text="${post.author}"></td>
+        <td>
+            <div class="actions">
+                <a class="edit" th:href="@{/posts/update/{id}(id=${post.id})}">Edit Post</a>
+                <a class="delete" th:href="@{/posts/delete/{id}(id=${post.id})}">Delete Post</a>
+            </div>
+        </td>
+    </tr>
+</table>
 </body>
 </html>

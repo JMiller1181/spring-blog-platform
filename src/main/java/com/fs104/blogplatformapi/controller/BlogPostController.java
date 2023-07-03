@@ -3,11 +3,11 @@ package com.fs104.blogplatformapi.controller;
 import com.fs104.blogplatformapi.model.BlogPost;
 import com.fs104.blogplatformapi.service.BlogPostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/posts")
 public class BlogPostController {
     private final BlogPostService service;
     @Autowired
@@ -15,42 +15,28 @@ public class BlogPostController {
         this.service = service;
     }
     //Create
-    @GetMapping("/create")
-    public String createPage(Model model){
-        model.addAttribute("post", new BlogPost());
-        return "posts/create";
-    }
-    @PostMapping("/create")
-    public String createPost(@ModelAttribute("post") BlogPost post){
+    @PostMapping("/posts/create")
+    public void createPost(@RequestBody BlogPost post){
         service.createPost(post);
-        return "redirect:/posts/list";
     }
     //Read
-    @GetMapping("/list")
-    public String listPosts(Model model){
-        model.addAttribute("postList", service.listPosts());
-        return "posts/list";
+    @GetMapping("/posts/list")
+    public List<BlogPost> listPosts(){
+        return service.listPosts();
     }
-    @GetMapping("/list/{id}")
-    public String readPost(@PathVariable("id") Long id, Model model){
-        model.addAttribute("post", service.readPosts(id));
-        return "posts/list";
+    @GetMapping("/posts/list/{id}")
+    public BlogPost readPost(@PathVariable("id") Long id){
+        return service.readPosts(id);
     }
     //Update
-    @GetMapping("/update/{id}")
-    public String updatePage(@PathVariable("id") Long id, Model model){
-        model.addAttribute("post", service.readPosts(id));
-        return "posts/update";
-    }
-    @PutMapping("/update/{id}")
-    public String updatePost(@PathVariable("id") Long id, @ModelAttribute("post") BlogPost post){
-        service.updatePost(id,post);
-        return "redirect:/posts/list";
+    @PutMapping("/posts/update/{id}")
+    public BlogPost updatePost(@PathVariable("id") Long id, @RequestBody BlogPost newPost){
+        service.updatePost(id,newPost);
+        return service.readPosts(id);
     }
     //Delete
-    @DeleteMapping("/delete/{id}")
-    public String deletePost(@PathVariable("id") Long id){
+    @DeleteMapping("/posts/delete/{id}")
+    public void deletePost(@PathVariable("id") Long id){
         service.deletePost(id);
-        return "redirect:/posts/list";
     }
 }

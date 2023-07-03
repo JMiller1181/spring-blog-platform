@@ -54,4 +54,10 @@ public class BlogPost {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+    @Override
+    public String toString(){
+        return "BlogPost{" + "id=" + this.id + ", title='" + this.title +
+                '\'' + ", content='" + this.content + '\'' +", author='" + this.author + '}';
+    }
 }
