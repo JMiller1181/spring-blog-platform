@@ -3,6 +3,8 @@ package com.fs104.blogplatformapi.controller;
 import com.fs104.blogplatformapi.model.BlogPost;
 import com.fs104.blogplatformapi.service.BlogPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +18,48 @@ public class BlogPostController {
     }
     //Create
     @PostMapping("/posts/create")
-    public void createPost(@RequestBody BlogPost post){
-        service.createPost(post);
+    public ResponseEntity<BlogPost> createPost(@RequestBody BlogPost post){
+        try {
+            return new ResponseEntity<>(service.createPost(post), HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     //Read
     @GetMapping("/posts/list")
-    public List<BlogPost> listPosts(){
-        return service.listPosts();
+    public ResponseEntity<List<BlogPost>> listPosts(){
+        try {
+            List<BlogPost> list =  service.listPosts();
+            if(list.isEmpty() || list.size() == 0){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     @GetMapping("/posts/list/{id}")
-    public BlogPost readPost(@PathVariable("id") Long id){
-        return service.readPosts(id);
+    public ResponseEntity<BlogPost> readPost(@PathVariable("id") Long id){
+        return new ResponseEntity<>(service.readPosts(id), HttpStatus.OK);
     }
     //Update
     @PutMapping("/posts/update/{id}")
-    public BlogPost updatePost(@PathVariable("id") Long id, @RequestBody BlogPost newPost){
-        service.updatePost(id,newPost);
-        return service.readPosts(id);
+    public ResponseEntity<BlogPost> updatePost(@PathVariable("id") Long id, @RequestBody BlogPost newPost){
+        try {
+            service.updatePost(id,newPost);
+            return new ResponseEntity<>(service.readPosts(id), HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     //Delete
     @DeleteMapping("/posts/delete/{id}")
-    public void deletePost(@PathVariable("id") Long id){
-        service.deletePost(id);
+    public ResponseEntity<HttpStatus> deletePost(@PathVariable("id") Long id){
+        try {
+            service.deletePost(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
